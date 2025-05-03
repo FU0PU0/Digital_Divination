@@ -1,0 +1,40 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica', sans-serif;
+    background-color: #fff8f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+  }
+  
+  #container {
+    text-align: center;
+    width: 80%;
+    max-width: 500px;
+  }
+  
+  #text {
+    font-size: 1.3rem;
+    margin-bottom: 20px;
+    transition: opacity 0.5s;
+  }
+  
+  input, button {
+    display: block;
+    margin: 10px auto;
+    padding: 10px;
+    font-size: 1rem;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  #map {
+    height: 300px;
+    width: 100%;
+    margin-top: 20px;
+  }
+  
