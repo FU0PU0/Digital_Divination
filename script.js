@@ -53,7 +53,23 @@ function showLocationInput() {
   step = 3;
   text.innerText = "Tell the gods roughly where you are:";
   showInput();
+
+  // 初始化 Autocomplete（每次出現時重新綁定）
+  const autocomplete = new google.maps.places.Autocomplete(input, {
+    types: ["geocode"],
+    componentRestrictions: { country: "us" },
+    fields: ["formatted_address", "geometry"]
+  });
+  
+
+  autocomplete.addListener("place_changed", () => {
+    const place = autocomplete.getPlace();
+    if (place && place.formatted_address) {
+      input.value = place.formatted_address;
+    }
+  });
 }
+
 
 function showWishInput() {
   step = 4;
@@ -119,63 +135,84 @@ function hideInput() {
   button.classList.add('hidden');
 }
 
-function initMap() {
-  console.log("Google Maps API loaded.");
-}
+function initMap() {}
 
-// Google Maps
-function initMap() { /* dummy callback */ }
 function showMap(address) {
   const geocoder = new google.maps.Geocoder();
   geocoder.geocode({ address }, (results, status) => {
-    if (status !== "OK" || !results[0]) {
-      text.innerText += `\n(We couldn’t find your location, but the gods understand.)`;
+    if (status !== 'OK' || !results[0]) {
+      text.innerText += '\n(We couldn’t find your location, but the gods understand.)';
       return;
     }
 
+    // 1. 使用者位置
     const userLoc = results[0].geometry.location;
+    const userLat = userLoc.lat();
+    const userLng = userLoc.lng();
 
-    // 1. 建立地圖並顯示使用者位置
+    // 一定要先把 <div id="map"> 顯示出來
+    mapDiv.classList.remove('hidden');
+
+    // 然後再初始化地圖
     const map = new google.maps.Map(mapDiv, {
       center: userLoc,
-      zoom: 12
+      zoom: 13
     });
+
+    // 標記「你的位置」
     new google.maps.Marker({
       map,
       position: userLoc,
-      title: "Your location"
+      title: 'Your Location',
+      icon: 'https://maps.google.com/mapfiles/ms/icons/red-dot.png'
     });
-    mapDiv.classList.remove('hidden');
 
-    // 2. 用 PlacesService 搜尋半徑內所有 POI
-    const service = new google.maps.places.PlacesService(map);
-    service.nearbySearch({
-      location: userLoc,
-      radius: 5000 // 5 公里範圍
-      // 不指定 type，回傳所有 point_of_interest
-    }, (places, placesStatus) => {
-      if (placesStatus === google.maps.places.PlacesServiceStatus.OK && places.length) {
-        // 隨機一個
-        const choice = places[Math.floor(Math.random() * places.length)];
+    // 3. 隨機計算幸運地點
+    const R = 5000; // 公尺
+    const d = Math.sqrt(Math.random()) * R;
+    const θ = Math.random() * 2 * Math.PI;
+    const δLat = (d * Math.cos(θ)) / 111000;
+    const δLng = (d * Math.sin(θ)) / (111000 * Math.cos(userLat * Math.PI/180));
+    const lucky = {
+      lat: userLat + δLat,
+      lng: userLng + δLng
+    };
 
-        // 標記這個幸運地點
-        new google.maps.Marker({
-          map,
-          position: choice.geometry.location,
-          title: choice.name,
-          icon: {
-            url: "https://maps.google.com/mapfiles/ms/icons/green-dot.png"
-          }
-        });
+    // 標記「幸運地點」
+    new google.maps.Marker({
+      map,
+      position: lucky,
+      title: `Lucky spot`,
+      icon: 'https://maps.google.com/mapfiles/ms/icons/green-dot.png'
+    });
 
-        // 顯示名稱
-        text.innerText += `\nLucky spot: ${choice.name}`;
+    // 4. 顯示座標文字
+    text.innerText += `\nLucky spot: (${lucky.lat.toFixed(5)}, ${lucky.lng.toFixed(5)})`;
+
+    // 5. （可選）畫路線
+    const directionsService = new google.maps.DirectionsService();
+    const directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers: true,  // 我們已經自己畫了 markers
+      polylineOptions: { strokeColor: '#4169E1', strokeOpacity: 0.7 }
+    });
+    directionsRenderer.setMap(map);
+
+    directionsService.route({
+      origin: userLoc,
+      destination: lucky,
+      travelMode: 'WALKING'
+    }, (res, status2) => {
+      if (status2 === 'OK') {
+        directionsRenderer.setDirections(res);
       } else {
-        text.innerText += `\n(No nearby places found.)`;
+        console.warn('Directions request failed:', status2);
       }
     });
   });
 }
+
+
+
 
 
 
