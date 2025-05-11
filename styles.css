@@ -1,41 +1,109 @@
+.pac-container {
+  z-index: 10000 !important;
+}
+/* Hero 區 */
+#hero {
+  position: relative;
+  width: 100%;
+  height: 150vh;    /* 你喜歡的總高度 */
+  overflow: hidden;
+}
+
+/* 背景圖 */
+.bg-image {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100vh;
+  background: url('online temple.png') center/cover no-repeat;
+  will-change: transform;
+}
+
+/* 疊圖：縮到視口內、垂直置中、初始 left:0 （JS 會立刻重新定位） */
+.overlay-image {
+  position: fixed;
+  top: 50%;                /* 垂直中點 */
+  left: 0;                 /* JS onScroll 首次就會覆蓋成「中間」位置 */
+  transform: translateY(-50%);
+  width: clamp(300px, 90vw, 1500px);
+  height: auto;
+  transition: left 0.2s;
+  will-change: left;
+  z-index: 2;
+}
+
+/* 文字容器 */
+#hero-content {
+  font-family: 'Doto', serif;
+  font-weight: 600;
+  position: fixed;
+  top: 60%;
+  left: 70%;                    /* 比 50% 再往左 5% */
+  transform: translate(-50%, -50%);
+  text-align: center;           /* 行内文字居中对齐 */
+  width: clamp(300px, 80vw, 600px); /* 根据屏幕宽度收缩，最大 400px */
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+#hero-content.hidden {
+  display: none;
+}
+  
+/* 保留你的 Hero 布局不动，body 这里只 reset 通用样式 */
 body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Helvetica', sans-serif;
-    background-color: #fff8f0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-  }
-  
-  #container {
-    text-align: center;
-    width: 80%;
-    max-width: 500px;
-  }
-  
-  #text {
-    font-size: 1.3rem;
-    margin-bottom: 20px;
-    transition: opacity 0.5s;
-  }
-  
-  input, button {
-    display: block;
-    margin: 10px auto;
-    padding: 10px;
-    font-size: 1rem;
-  }
-  
-  .hidden {
-    display: none;
-  }
-  
-  #map {
-    display: block;   /* 確保它不是 inline */
-    height: 300px;
-    width: 100%;
-    margin-top: 20px;
-  }
-  
+  margin: 0;
+  padding: 0;
+  background-color: #cf7979;
+  font-family: 'Helvetica', sans-serif;
+}
+
+/* Hero 阶段的布局全在 #hero 和 .overlay-image 里，这里不用改 */
+
+/* 主内容阶段：当 body 有 main-mode 时，再启用这段居中 */
+body.main-mode {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+/* 只在 main-mode 下，#hero-content（或你 wrap 主流程的 #container）生效 */
+body.main-mode #hero-content {
+  position: static !important;
+  transform: none !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+
+#container {
+  text-align: center;
+  width: 80%;
+  max-width: 500px;
+}
+
+#text {
+  font-size: 1.3rem;
+  margin-bottom: 20px;
+  transition: opacity 0.5s;
+}
+
+input, button {
+  font-family: 'Doto', serif;
+  font-weight: 600;
+  display: block;
+  margin: 10px auto;
+  padding: 10px;
+  font-size: 1rem;
+}
+
+.hidden {
+  display: none;
+}
+
+#map {
+  display: block;
+  height: 300px;
+  width: 100%;
+  margin-top: 20px;
+}
+

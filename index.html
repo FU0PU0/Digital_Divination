@@ -1,24 +1,39 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
   <title>Online Temple Divination</title>
   <link rel="stylesheet" href="styles.css">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Doto:wght@100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div id="container">
+  <!-- Hero 區：只包含背景圖與疊圖 -->
+  <section id="hero">
+    <div class="bg-image"></div>
+    <img
+      id="overlay-image"
+      src="temple.png"
+      alt="Overlay"
+      class="overlay-image"
+    />
+  </section>
+
+  <!-- 主流程容器：搬到 #hero 之外，移除 #hero 時不會被一起刪除 -->
+  <div id="hero-content" class="hidden">
     <div id="text"></div>
-    <input type="text" id="input" class="hidden">
+    <input  id="input"  class="hidden">
     <button id="submit" class="hidden">Submit</button>
-    <div id="map" class="hidden"></div>
+    <div   id="map"    class="hidden"></div>
   </div>
 
   <script src="script.js"></script>
-
-  <script
-  async
-  defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-R0jf6JNL9RaB60cY90NSCGkVoH6PtOY&libraries=places&callback=initMap">
-</script>
+  <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD-R0jf6JNL9RaB60cY90NSCGkVoH6PtOY&libraries=places&callback=initMap">
+  </script>
 </body>
 </html>
+
+
